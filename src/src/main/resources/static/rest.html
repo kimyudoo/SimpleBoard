@@ -13,12 +13,20 @@
 					  for(index = 0; index < data.length; index++) {
 						document.getElementById("contentsTable").innerHTML += 
 							"		<tr>" +
+							"			<td><a href='javascript:goDel(" + data[index].id +
+										")'>[X]</a></td>" + 
 							"			<td>" + data[index].id + "</td>" +
 							"			<td>" + data[index].name + "</td>" +
 							"			<td>" + data[index].contents + "</td>" +
 							"		</tr>";
 					  }
 					});
+			}
+			function goDel(id) {
+				fetch("http://127.0.0.1:8080/delREST?id=" + id)
+				.then((response) => {
+				  getList();
+				});
 			}
 			function goAdd() {
 				var user = document.getElementById("username").value;

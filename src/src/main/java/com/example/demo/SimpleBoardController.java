@@ -65,4 +65,13 @@ public class SimpleBoardController {
 		return json;
 	}
 	
+	@RequestMapping(value="/delREST", method=RequestMethod.GET)
+	@ResponseBody
+	public String delREST(HttpServletRequest request) {
+		String id = request.getParameter("id");
+		Long userId = Long.parseLong(id);
+		simpleBoardDAO.deleteById(userId);
+		return "OK";
+	}
+	
 }
