@@ -20,6 +20,7 @@
 							"			<td>" + data[index].contents + "</td>" +
 							"		</tr>";
 					  }
+					  document.getElementById("username").focus();
 					});
 			}
 			function goDel(id) {
@@ -52,9 +53,14 @@
 				  document.getElementById("username").value = "";
 				  document.getElementById("contents").value = "";
 				  document.getElementById("password").value = "";
-				  getList();
+				  getList();				  
 				});
-			}			
+			}	
+			function keyPress(event) {
+				if(event.keyCode == 13) {
+					goAdd();
+				}
+			}		
 		</script>
 		<table>			
 			<tr>
@@ -62,7 +68,7 @@
 					<form id="myform" method="POST">
 						<input type="text" id="username" name="username" placeholder="이름">
 						<input type="text" id="contents" name="contents" placeholder="내용">
-						<input type="password" id="password" name="password" placeholder="비밀번호">
+						<input type="password" id="password" onKeydown="javascript:keyPress(event)" name="password" placeholder="비밀번호">
 						<input type="button" value="입력" onclick="javascript:goAdd()">
 					</form>
 				</td>
