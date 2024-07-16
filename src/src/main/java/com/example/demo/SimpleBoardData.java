@@ -27,10 +27,14 @@ public class SimpleBoardData {
 	
 	@Column(length = 200, nullable = false)    
 	private String contents; 	
+	
+	@Column(length = 200, nullable = false)    
+	private String password; 	
 			
-	public SimpleBoardData(Long id, String name, String contents) {
+	public SimpleBoardData(Long id, String name, String contents, String password) {
 		this.id = id;
 		this.name = name;
 		this.contents = contents;
+		this.password = password;
 	}
 }

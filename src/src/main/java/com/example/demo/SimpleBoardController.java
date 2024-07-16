@@ -44,14 +44,16 @@ public class SimpleBoardController {
 	}
 	
 
-	@RequestMapping(value="/addREST", method=RequestMethod.GET)
+	@RequestMapping(value="/addREST", method=RequestMethod.POST)
 	@ResponseBody
 	public String addREST(HttpServletRequest request) {
 		String name = request.getParameter("username");
 		String contents = request.getParameter("contents");
+		String password = request.getParameter("password");
 		SimpleBoardData simpleBoard = SimpleBoardData.builder()
 						.name(name)
 						.contents(contents)
+						.password(password)
 						.build();
 		simpleBoardDAO.save(simpleBoard);
 		return "OK";
@@ -69,8 +71,9 @@ public class SimpleBoardController {
 	@ResponseBody
 	public String delREST(HttpServletRequest request) {
 		String id = request.getParameter("id");
-		Long userId = Long.parseLong(id);
-		simpleBoardDAO.deleteById(userId);
+		String password = request.getParameter("password");
+		Long contentsId = Long.parseLong(id);
+		simpleBoardDAO.deleteById(contentsId);
 		return "OK";
 	}
 	

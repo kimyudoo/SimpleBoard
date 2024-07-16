@@ -23,36 +23,49 @@
 					});
 			}
 			function goDel(id) {
-				fetch("http://127.0.0.1:8080/delREST?id=" + id)
-				.then((response) => {
-				  getList();
-				});
+				if(confirm("정말 삭제하시겠습니까?")){
+					result = window.prompt("비밀번호", "");
+					fetch("http://127.0.0.1:8080/delREST?id=" + id + "&password=" + result)
+						.then((response) => {
+						  getList();
+					});    
+				}				
 			}
 			function goAdd() {
-				var user = document.getElementById("username").value;
+				var username = document.getElementById("username").value;
 				var contents = document.getElementById("contents").value;
-				fetch("http://127.0.0.1:8080/addREST?username=" + user + "&contents=" + contents)
+				var password = document.getElementById("password").value;
+				const payload = new FormData();
+				payload.append("username", username);
+				payload.append("contents", contents);
+				payload.append("password", password);
+				fetch("http://127.0.0.1:8080/addREST", {
+					  method: "POST",
+					  body: payload,
+				})
 				.then((response) => {
 				  document.getElementById("username").value = "";
 				  document.getElementById("contents").value = "";
+				  document.getElementById("password").value = "";
 				  getList();
 				});
 			}			
 		</script>
-		<table>
+		<table>			
+			<tr>
+				<td colspan=3>
+					<form id="myform" method="POST">
+						<input type="text" id="username" name="username" placeholder="이름">
+						<input type="text" id="contents" name="contents" placeholder="내용">
+						<input type="password" id="password" name="password" placeholder="비밀번호">
+						<input type="button" value="입력" onclick="javascript:goAdd()">
+					</form>
+				</td>
+			</tr>
 			<tr>
 				<td>ID</td>
 				<td>작성자</td>
 				<td>내용</td>
-			</tr>
-			<tr>
-				<td colspan=3>
-					<form method="POST">
-						<input type="text" id="username" name="username" placeholder="이름">
-						<input type="text" id="contents" name="contents" placeholder="내용">
-						<input type="button" value="입력" onclick="javascript:goAdd()">
-					</form>
-				</td>
 			</tr>
 		</table>
 		<table id="contentsTable">
