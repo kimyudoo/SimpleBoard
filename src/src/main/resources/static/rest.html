@@ -1,0 +1,53 @@
+<HTML>
+	<head>
+		<meta charset="utf8">
+	</head>
+	<body>
+		<script>
+			getList();
+			function getList() {
+				fetch("http://127.0.0.1:8080/listREST")
+					.then((response) => response.json())
+					.then((data) => {
+					  document.getElementById("contentsTable").innerHTML = "";
+					  for(index = 0; index < data.length; index++) {
+						document.getElementById("contentsTable").innerHTML += 
+							"		<tr>" +
+							"			<td>" + data[index].id + "</td>" +
+							"			<td>" + data[index].name + "</td>" +
+							"			<td>" + data[index].contents + "</td>" +
+							"		</tr>";
+					  }
+					});
+			}
+			function goAdd() {
+				var user = document.getElementById("username").value;
+				var contents = document.getElementById("contents").value;
+				fetch("http://127.0.0.1:8080/addREST?username=" + user + "&contents=" + contents)
+				.then((response) => {
+				  document.getElementById("username").value = "";
+				  document.getElementById("contents").value = "";
+				  getList();
+				});
+			}			
+		</script>
+		<table>
+			<tr>
+				<td>ID</td>
+				<td>작성자</td>
+				<td>내용</td>
+			</tr>
+			<tr>
+				<td colspan=3>
+					<form method="POST">
+						<input type="text" id="username" name="username" placeholder="이름">
+						<input type="text" id="contents" name="contents" placeholder="내용">
+						<input type="button" value="입력" onclick="javascript:goAdd()">
+					</form>
+				</td>
+			</tr>
+		</table>
+		<table id="contentsTable">
+		</table>
+	</body>	
+</HTML>

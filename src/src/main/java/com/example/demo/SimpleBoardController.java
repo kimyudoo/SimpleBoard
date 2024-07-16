@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -8,10 +9,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
+import com.google.gson.Gson; 
 
 @Controller
 public class SimpleBoardController {
@@ -37,6 +41,28 @@ public class SimpleBoardController {
 		List<SimpleBoardData> result = simpleBoardDAO.findAll(Sort.by(Sort.Direction.DESC, "id"));
 		request.setAttribute("boardList", result);
 		return "index";
+	}
+	
+
+	@RequestMapping(value="/addREST", method=RequestMethod.GET)
+	@ResponseBody
+	public String addREST(HttpServletRequest request) {
+		String name = request.getParameter("username");
+		String contents = request.getParameter("contents");
+		SimpleBoardData simpleBoard = SimpleBoardData.builder()
+						.name(name)
+						.contents(contents)
+						.build();
+		simpleBoardDAO.save(simpleBoard);
+		return "OK";
+	}
+	
+	@RequestMapping(value="/listREST", method=RequestMethod.GET)
+	@ResponseBody
+	public String listREST(HttpServletRequest request) {
+		List<SimpleBoardData> resultList = simpleBoardDAO.findAll(Sort.by(Sort.Direction.DESC, "id"));
+		String json = new Gson().toJson(resultList);
+		return json;
 	}
 	
 }
