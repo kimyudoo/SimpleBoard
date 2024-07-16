@@ -15,7 +15,8 @@
 			<tr>
 				<td colspan=3>
 					<form method="POST" action="/add">
-						<input type="text" name="contents">
+						<input type="text" name="username" placeholder="이름">
+						<input type="text" name="contents" placeholder="내용">
 						<input type="submit" value="입력">
 					</form>
 				</td>
