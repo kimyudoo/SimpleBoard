@@ -12,4 +12,5 @@ import jakarta.transaction.Transactional;
 public interface SimpleBoardDataRepository extends JpaRepository<SimpleBoardData, Long>{
 	@Transactional
 	void deleteById(Long id);
+	Long countByIdAndPassword(Long id, String password);
 }

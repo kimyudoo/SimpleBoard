@@ -72,9 +72,13 @@ public class SimpleBoardController {
 	public String delREST(HttpServletRequest request) {
 		String id = request.getParameter("id");
 		String password = request.getParameter("password");
-		Long contentsId = Long.parseLong(id);
-		simpleBoardDAO.deleteById(contentsId);
-		return "OK";
-	}
-	
+		Long contentsId = Long.parseLong(id);		
+		Long findCount = simpleBoardDAO.countByIdAndPassword(contentsId, password);
+		if(findCount <= 0) {
+			return "{\"result\": \"fail\"}";
+		} else {
+			simpleBoardDAO.deleteById(contentsId);
+			return "{\"result\": \"success\"}";
+		}
+	}	
 }

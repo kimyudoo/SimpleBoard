@@ -26,8 +26,13 @@
 				if(confirm("정말 삭제하시겠습니까?")){
 					result = window.prompt("비밀번호", "");
 					fetch("http://127.0.0.1:8080/delREST?id=" + id + "&password=" + result)
-						.then((response) => {
-						  getList();
+					.then((response) => response.json())
+					.then((data) => {
+						if(data.result == "fail") {
+							alert("비밀번호가 틀렸습니다.");	
+						} else {
+							getList();
+						}						  
 					});    
 				}				
 			}
