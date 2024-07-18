@@ -38,18 +38,23 @@ public class SimpleBoardController {
 	@ResponseBody
 	public String logoutREST(HttpServletRequest request, HttpSession session) {
 		session.setAttribute("loginok", "");
+		session.setAttribute("loginname", "");
 		return "{\"result\": \"success\"}";
 	}
 	@RequestMapping(value="/loginREST", method=RequestMethod.POST)
 	@ResponseBody
 	public String loginREST(HttpServletRequest request, HttpSession session) {
 		String userId = request.getParameter("userid");
-		String userPassword = request.getParameter("password");
-		Long findCount = memberDAO.countByIdAndPassword(userId, userPassword);
+		String userPassword = request.getParameter("password");		
+		Long findCount = memberDAO.countByIdAndPassword(userId, userPassword);		
 		if(findCount <= 0) {
 			return "{\"result\": \"fail\"}";
 		} else {
+			Optional<MemberInfo> mem = memberDAO.findById(userId);
+			MemberInfo resultMem = mem.get();
+			String userName = resultMem.getName();
 			session.setAttribute("loginok", userId);
+			session.setAttribute("loginname", userName);
 			return "{\"result\": \"success\"}";
 		}
 	}
@@ -70,10 +75,10 @@ public class SimpleBoardController {
 
 	@RequestMapping(value="/addREST", method=RequestMethod.POST)
 	@ResponseBody
-	public String addREST(HttpServletRequest request) {
-		String name = request.getParameter("username");
+	public String addREST(HttpServletRequest request, HttpSession session) {
+		String name = (String)session.getAttribute("loginname");
 		String contents = request.getParameter("contents");
-		String password = request.getParameter("password");
+		String password = (String)session.getAttribute("loginok");
 		SimpleBoardData simpleBoard = SimpleBoardData.builder()
 						.name(name)
 						.contents(contents)
@@ -93,9 +98,9 @@ public class SimpleBoardController {
 	
 	@RequestMapping(value="/delREST", method=RequestMethod.GET)
 	@ResponseBody
-	public String delREST(HttpServletRequest request) {
+	public String delREST(HttpServletRequest request, HttpSession session) {
 		String id = request.getParameter("id");
-		String password = request.getParameter("password");
+		String password = (String)session.getAttribute("loginok");
 		Long contentsId = Long.parseLong(id);		
 		Long findCount = simpleBoardDAO.countByIdAndPassword(contentsId, password);
 		if(findCount <= 0) {

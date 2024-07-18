@@ -25,9 +25,13 @@ public class MemberInfo {
 	
 	@Column(length = 300, nullable = false)    
 	private String password;
+	
+	@Column(length = 300, nullable = false)    
+	private String name;
 				
-	public MemberInfo(String id, String password) {
+	public MemberInfo(String id, String password, String name) {
 		this.id = id;
 		this.password = password;
+		this.name = name;
 	}
 }

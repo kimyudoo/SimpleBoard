@@ -5,8 +5,8 @@
 	</head>
 	<body onload="loginCheck()">
 		<script>	
+			var loginok = '<%=(String)session.getAttribute("loginok")%>';
 			function loginCheck() {
-				var loginok = '<%=(String)session.getAttribute("loginok")%>';
 				if(loginok != "" && loginok != "null") {
 					document.getElementById("loginbox").style.display = "none";
 					document.getElementById("contentsdiv").style.display = "block";
@@ -31,6 +31,7 @@
 					if(data.result == "fail") {
 						alert("로그인 실패");	
 					} else {
+						loginok = userid;
 						document.getElementById("loginbox").style.display = "none";
 						document.getElementById("contentsdiv").style.display = "block";
 						getList();
@@ -41,16 +42,24 @@
 				fetch("http://127.0.0.1:8080/listREST")
 					.then((response) => response.json())
 					.then((data) => {
-					  document.getElementById("contentsTable").innerHTML = "";
+					  document.getElementById("contentsTable").innerHTML = 
+					  				"<tr> " +
+					  					"<td width=50>ID</td> " +
+					  					"<td width=100>작성자</td> " +
+					  					"<td width=200>내용</td>" +
+					  				"</tr>";
 					  for(index = 0; index < data.length; index++) {
+						var delText = "";
+						if(data[index].password == loginok) {
+							delText = "<a href='javascript:goDel(" + data[index].id + ")'>[X]</a>";
+					    }
 						document.getElementById("contentsTable").innerHTML += 
-							"		<tr>" +
-							"			<td><a href='javascript:goDel(" + data[index].id +
-										")'>[X]</a></td>" + 
-							"			<td>" + data[index].id + "</td>" +
+							"		<tr><td>" + delText + " " + data[index].id + "</td>" +
 							"			<td>" + data[index].name + "</td>" +
 							"			<td>" + data[index].contents + "</td>" +
 							"		</tr>";
+						
+						
 					  }
 					  document.getElementById("username").focus();
 					});
@@ -64,8 +73,7 @@
 			}
 			function goDel(id) {
 				if(confirm("정말 삭제하시겠습니까?")){
-					result = window.prompt("비밀번호", "");
-					fetch("http://127.0.0.1:8080/delREST?id=" + id + "&password=" + result)
+					fetch("http://127.0.0.1:8080/delREST?id=" + id)
 					.then((response) => response.json())
 					.then((data) => {
 						if(data.result == "fail") {
@@ -77,19 +85,14 @@
 				}				
 			}
 			function goAdd() {
-				var username = document.getElementById("username").value;
 				var contents = document.getElementById("contents").value;
-				var password = '<%=(String)session.getAttribute("loginok")%>';
 				const payload = new FormData();
-				payload.append("username", username);
 				payload.append("contents", contents);
-				payload.append("password", password);
 				fetch("http://127.0.0.1:8080/addREST", {
 					  method: "POST",
 					  body: payload,
 				})
 				.then((response) => {
-				  document.getElementById("username").value = "";
 				  document.getElementById("contents").value = "";
 				  getList();				  
 				});
@@ -112,18 +115,12 @@
 				<tr>
 					<td colspan=3>
 						<form id="myform" method="POST">
-							<input type="text" id="username" name="username" placeholder="이름">
 							<input type="text" id="contents" name="contents" placeholder="내용" onKeydown="javascript:keyPress(event)" >
 							<input type="button" value="입력" onclick="javascript:goAdd()">
 							<input type="button" value="로그아웃" onclick="javascript:goLogout()">
 						</form>
 					</td>
-				</tr>
-				<tr>
-					<td>ID</td>
-					<td>작성자</td>
-					<td>내용</td>
-				</tr>
+				</tr>				
 			</table>
 			<table id="contentsTable">
 			</table>
