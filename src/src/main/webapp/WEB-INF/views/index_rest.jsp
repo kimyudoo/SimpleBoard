@@ -79,7 +79,7 @@
 			function goAdd() {
 				var username = document.getElementById("username").value;
 				var contents = document.getElementById("contents").value;
-				var password = document.getElementById("password").value;
+				var password = '<%=(String)session.getAttribute("loginok")%>';
 				const payload = new FormData();
 				payload.append("username", username);
 				payload.append("contents", contents);
@@ -91,7 +91,6 @@
 				.then((response) => {
 				  document.getElementById("username").value = "";
 				  document.getElementById("contents").value = "";
-				  document.getElementById("password").value = "";
 				  getList();				  
 				});
 			}	
@@ -114,8 +113,7 @@
 					<td colspan=3>
 						<form id="myform" method="POST">
 							<input type="text" id="username" name="username" placeholder="이름">
-							<input type="text" id="contents" name="contents" placeholder="내용">
-							<input type="password" id="password" onKeydown="javascript:keyPress(event)" name="password" placeholder="비밀번호">
+							<input type="text" id="contents" name="contents" placeholder="내용" onKeydown="javascript:keyPress(event)" >
 							<input type="button" value="입력" onclick="javascript:goAdd()">
 							<input type="button" value="로그아웃" onclick="javascript:goLogout()">
 						</form>
