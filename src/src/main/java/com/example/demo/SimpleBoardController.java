@@ -53,9 +53,16 @@ public class SimpleBoardController {
 			Optional<MemberInfo> mem = memberDAO.findById(userId);
 			MemberInfo resultMem = mem.get();
 			String userName = resultMem.getName();
+			int userGrade = resultMem.getGrade();
+			String grade;
+			if(userGrade == 0) {
+				grade = "member";
+			} else {
+				grade = "admin";			}
 			session.setAttribute("loginok", userId);
 			session.setAttribute("loginname", userName);
-			return "{\"result\": \"success\"}";
+			session.setAttribute("memberGrade", grade);			
+			return "{\"result\": \"success\", \"grade\": \"" + grade + "\" }";
 		}
 	}
 	@RequestMapping(value="/add", method=RequestMethod.POST)
@@ -101,13 +108,14 @@ public class SimpleBoardController {
 	public String delREST(HttpServletRequest request, HttpSession session) {
 		String id = request.getParameter("id");
 		String password = (String)session.getAttribute("loginok");
+		String memberGrade = (String)session.getAttribute("membergrade");
 		Long contentsId = Long.parseLong(id);		
 		Long findCount = simpleBoardDAO.countByIdAndPassword(contentsId, password);
-		if(findCount <= 0) {
-			return "{\"result\": \"fail\"}";
-		} else {
+		if(findCount > 0 || memberGrade.equals("admin")) {
 			simpleBoardDAO.deleteById(contentsId);
 			return "{\"result\": \"success\"}";
+		} else {
+			return "{\"result\": \"fail\"}";
 		}
 	}	
 }

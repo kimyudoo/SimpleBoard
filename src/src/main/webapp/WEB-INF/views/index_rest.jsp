@@ -6,6 +6,7 @@
 	<body onload="loginCheck()">
 		<script>	
 			var loginok = '<%=(String)session.getAttribute("loginok")%>';
+			var member_grade = "";
 			function loginCheck() {
 				if(loginok != "" && loginok != "null") {
 					document.getElementById("loginbox").style.display = "none";
@@ -32,6 +33,7 @@
 						alert("로그인 실패");	
 					} else {
 						loginok = userid;
+						member_grade = data.grade;
 						document.getElementById("loginbox").style.display = "none";
 						document.getElementById("contentsdiv").style.display = "block";
 						getList();
@@ -50,7 +52,7 @@
 					  				"</tr>";
 					  for(index = 0; index < data.length; index++) {
 						var delText = "";
-						if(data[index].password == loginok) {
+						if(data[index].password == loginok || member_grade == "admin") {
 							delText = "<a href='javascript:goDel(" + data[index].id + ")'>[X]</a>";
 					    }
 						document.getElementById("contentsTable").innerHTML += 
@@ -67,6 +69,8 @@
 			function goLogout() {
 				fetch("http://127.0.0.1:8080/logoutREST")
 				.then((response) => {
+					loginok = "";
+					member_grade = "";
 					document.getElementById("loginbox").style.display = "block";
 					document.getElementById("contentsdiv").style.display = "none";		  
 				}); 		

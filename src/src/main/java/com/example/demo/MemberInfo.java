@@ -28,10 +28,14 @@ public class MemberInfo {
 	
 	@Column(length = 300, nullable = false)    
 	private String name;
-				
-	public MemberInfo(String id, String password, String name) {
+	
+	@Column(nullable = false)    
+	private int grade;
+	
+	public MemberInfo(String id, String password, String name, int grade) {
 		this.id = id;
 		this.password = password;
 		this.name = name;
+		this.grade = grade;
 	}
 }
