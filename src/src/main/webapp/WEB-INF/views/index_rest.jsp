@@ -10,16 +10,19 @@
 			function loginCheck() {
 				if(loginok != "" && loginok != "null") {
 					document.getElementById("loginbox").style.display = "none";
-					document.getElementById("contentsdiv").style.display = "block";
+					document.getElementById("contentsdiv").style.display = "block";					  
 					getList();
 				} else {
 					document.getElementById("loginbox").style.display = "block";
 					document.getElementById("contentsdiv").style.display = "none";
+					document.getElementById("userid").focus();	
 				}
 			}
 			function goLogin() {
 				var userid = document.getElementById("userid").value;
 				var password = document.getElementById("userpassword").value;
+				document.getElementById("userid").value = "";
+				document.getElementById("userpassword").value = "";
 				const payload = new FormData();
 				payload.append("userid", userid);
 				payload.append("password", password);
@@ -29,6 +32,7 @@
 				})
 				.then((response) => response.json())
 				.then((data) => {
+					document.getElementById("userid").focus();	
 					if(data.result == "fail") {
 						alert("로그인 실패");	
 					} else {
@@ -46,7 +50,7 @@
 					.then((data) => {
 					  document.getElementById("contentsTable").innerHTML = 
 					  				"<tr> " +
-					  					"<td width=50>ID</td> " +
+					  					"<td width=70>ID</td> " +
 					  					"<td width=100>작성자</td> " +
 					  					"<td width=200>내용</td>" +
 					  				"</tr>";
@@ -63,7 +67,7 @@
 						
 						
 					  }
-					  document.getElementById("username").focus();
+					  document.getElementById("contents").focus();
 					});
 			}
 			function goLogout() {
@@ -72,7 +76,8 @@
 					loginok = "";
 					member_grade = "";
 					document.getElementById("loginbox").style.display = "block";
-					document.getElementById("contentsdiv").style.display = "none";		  
+					document.getElementById("contentsdiv").style.display = "none";	
+					document.getElementById("userid").focus();	  
 				}); 		
 			}
 			function goDel(id) {
@@ -101,28 +106,28 @@
 				  getList();				  
 				});
 			}	
-			function keyPress(event) {
+			function keyPress(event, menunum) {
 				if(event.keyCode == 13) {
-					goAdd();
+					if(menunum == 1) {
+						goAdd();	
+					} else {
+						goLogin();
+					}					
 				}
 			}		
 		</script>
 		<div id="loginbox">
-			<form name="loginForm" method="POST">
-				<input type="text" id="userid"><br>
-				<input type="password" id="userpassword">
-				<input type="button" value="로그인" onclick="javascript:goLogin()">
-			</form>
+			<input type="text" id="userid" placeholder="아이디"><br>
+			<input type="password" id="userpassword" placeholder="비밀번호"  onKeydown="javascript:keyPress(event, 2)">
+			<input type="button" value="로그인" onclick="javascript:goLogin()">
 		</div>
 		<div id="contentsdiv">
 			<table>			
 				<tr>
 					<td colspan=3>
-						<form id="myform" method="POST">
-							<input type="text" id="contents" name="contents" placeholder="내용" onKeydown="javascript:keyPress(event)" >
-							<input type="button" value="입력" onclick="javascript:goAdd()">
-							<input type="button" value="로그아웃" onclick="javascript:goLogout()">
-						</form>
+						<input type="text" id="contents" name="contents" placeholder="내용" onKeydown="javascript:keyPress(event, 1)" >
+						<input type="button" value="입력" onclick="javascript:goAdd()">
+						<input type="button" value="로그아웃" onclick="javascript:goLogout()">
 					</td>
 				</tr>				
 			</table>
