@@ -6,7 +6,7 @@
 	<body onload="loginCheck()">
 		<script>	
 			var loginok = '<%=(String)session.getAttribute("loginok")%>';
-			var member_grade = "";
+			var member_grade = '<%=(String)session.getAttribute("memberGrade")%>';
 			function loginCheck() {
 				if(loginok != "" && loginok != "null") {
 					document.getElementById("loginbox").style.display = "none";
