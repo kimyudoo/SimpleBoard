@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import com.google.gson.Gson; 
 
 @Controller
@@ -22,13 +25,34 @@ public class SimpleBoardController {
 	@Autowired
 	private SimpleBoardDataRepository simpleBoardDAO;
 	
+	@Autowired
+	private MemberInfoRepository memberDAO;
+	
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String index(HttpServletRequest request) {
 		List<SimpleBoardData> result = simpleBoardDAO.findAll(Sort.by(Sort.Direction.DESC, "id"));
 		request.setAttribute("boardList", result);
-		return "index";
+		return "index_rest";
 	}
-	
+	@RequestMapping(value="/logoutREST", method=RequestMethod.GET)
+	@ResponseBody
+	public String logoutREST(HttpServletRequest request, HttpSession session) {
+		session.setAttribute("loginok", "");
+		return "{\"result\": \"success\"}";
+	}
+	@RequestMapping(value="/loginREST", method=RequestMethod.POST)
+	@ResponseBody
+	public String loginREST(HttpServletRequest request, HttpSession session) {
+		String userId = request.getParameter("userid");
+		String userPassword = request.getParameter("password");
+		Long findCount = memberDAO.countByIdAndPassword(userId, userPassword);
+		if(findCount <= 0) {
+			return "{\"result\": \"fail\"}";
+		} else {
+			session.setAttribute("loginok", userId);
+			return "{\"result\": \"success\"}";
+		}
+	}
 	@RequestMapping(value="/add", method=RequestMethod.POST)
 	public String add(HttpServletRequest request) {
 		String name = request.getParameter("username");
