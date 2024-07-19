@@ -23,12 +23,16 @@
 				var password = document.getElementById("userpassword").value;
 				document.getElementById("userid").value = "";
 				document.getElementById("userpassword").value = "";
-				const payload = new FormData();
-				payload.append("userid", userid);
-				payload.append("password", password);
-				fetch("http://127.0.0.1:8080/loginREST", {
+				var testList = new Object() ;
+				testList.userid = userid;
+				testList.userpassword = password;
+				var jsonData = JSON.stringify(testList) ;
+				fetch("http://127.0.0.1:3000/loginREST", {
 					  method: "POST",
-					  body: payload,
+					  headers: {
+						"Content-Type": "application/json"
+					  },
+					  body: jsonData,
 				})
 				.then((response) => response.json())
 				.then((data) => {
