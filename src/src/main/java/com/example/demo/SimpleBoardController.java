@@ -94,7 +94,24 @@ public class SimpleBoardController {
 		simpleBoardDAO.save(simpleBoard);
 		return "OK";
 	}
-	
+	@RequestMapping(value="/modREST", method=RequestMethod.GET)
+	@ResponseBody
+	public String modREST(HttpServletRequest request, HttpSession session) {
+		String contents = request.getParameter("contents");
+		String idStr = request.getParameter("id");
+		String modPass = request.getParameter("password");
+		String modName = request.getParameter("name");
+		Long id = Long.parseLong(idStr);
+		System.out.print("CONTENTS = > " + contents + ", ID => " + id);
+		SimpleBoardData simpleBoard = SimpleBoardData.builder()
+						.id(id)
+						.name(modName)
+						.password(modPass)
+						.contents(contents)
+						.build();
+		simpleBoardDAO.save(simpleBoard);
+		return "OK";
+	}
 	@RequestMapping(value="/listREST", method=RequestMethod.GET)
 	@ResponseBody
 	public String listREST(HttpServletRequest request) {

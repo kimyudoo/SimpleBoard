@@ -50,17 +50,19 @@
 					.then((data) => {
 					  document.getElementById("contentsTable").innerHTML = 
 					  				"<tr> " +
-					  					"<td width=70>ID</td> " +
+					  					"<td width=100>ID</td> " +
 					  					"<td width=100>작성자</td> " +
 					  					"<td width=200>내용</td>" +
 					  				"</tr>";
 					  for(index = 0; index < data.length; index++) {
 						var delText = "";
+						var modText = "";
 						if(data[index].password == loginok || member_grade == "admin") {
 							delText = "<a href='javascript:goDel(" + data[index].id + ")'>[X]</a>";
+							modText = "<a href='javascript:goMod(" + data[index].id + ", \"" + data[index].password + "\", \"" + data[index].name + "\")'>[V]</a>";
 					    }
 						document.getElementById("contentsTable").innerHTML += 
-							"		<tr><td>" + delText + " " + data[index].id + "</td>" +
+							"		<tr><td>" + delText + " " + modText + " " + data[index].id + "</td>" +
 							"			<td>" + data[index].name + "</td>" +
 							"			<td>" + data[index].contents + "</td>" +
 							"		</tr>";
@@ -92,6 +94,14 @@
 						}						  
 					});    
 				}				
+			}
+			function goMod(id, modPass, modName) {
+				var modifyText = prompt("수정 내용");
+				fetch("http://127.0.0.1:8080/modREST?id=" + id + "&contents=" + modifyText
+						+ "&password=" + modPass + "&name=" + modName)
+				.then((response) => {
+					getList();		  
+				}); 							
 			}
 			function goAdd() {
 				var contents = document.getElementById("contents").value;
