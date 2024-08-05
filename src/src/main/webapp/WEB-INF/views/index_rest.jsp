@@ -6,9 +6,20 @@
 	<body onload="loginCheck()">
 		<script>	
 			let TimerCheck;
-			var loginok = '<%=(String)session.getAttribute("loginok")%>';
-			var member_grade = '<%=(String)session.getAttribute("memberGrade")%>';
-			function loginCheck() {				
+			let loginok = '<%=(String)session.getAttribute("loginok")%>';
+			let member_grade = '<%=(String)session.getAttribute("memberGrade")%>';		
+			let messageSocket;	
+			function sendWebsocket() {
+				messageSocket.send("Send");
+			}
+			function startSocket() {
+				messageSocket = new WebSocket("ws://192.168.22.10:8080/messaging");
+				messageSocket.onmessage = function (event) {
+				  console.log("SOCKET => " + event.data);
+				  getList();
+				}
+			}
+			function loginCheck() {							
 				if(loginok != "" && loginok != "null") {
 					document.getElementById("loginbox").style.display = "none";
 					document.getElementById("contentsdiv").style.display = "block";								  
@@ -42,8 +53,9 @@
 						member_grade = data.grade;
 						document.getElementById("loginbox").style.display = "none";
 						document.getElementById("contentsdiv").style.display = "block";
-						TimerCheck = setInterval(getList, 1000);
+						//TimerCheck = setInterval(getList, 1000);
 						getList();
+						startSocket();						
 					}						  
 				});  
 			}	
@@ -84,7 +96,8 @@
 					document.getElementById("loginbox").style.display = "block";
 					document.getElementById("contentsdiv").style.display = "none";	
 					document.getElementById("userid").focus();	 
-					clearInterval(TimerCheck);	 
+					//clearInterval(TimerCheck);	 
+					messageSocket.close();
 				}); 		
 			}
 			function goDel(id) {
@@ -119,6 +132,7 @@
 				})
 				.then((response) => {
 				  document.getElementById("contents").value = "";
+				  sendWebsocket();
 				  getList();				  
 				});
 			}	
@@ -130,7 +144,7 @@
 						goLogin();
 					}					
 				}
-			}		
+			}	
 		</script>
 		<div id="loginbox">
 			<input type="text" id="userid" placeholder="아이디"><br>
