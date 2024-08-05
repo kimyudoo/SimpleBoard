@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpSession;
 
 import com.google.gson.Gson; 
 
+@CrossOrigin
 @Controller
 public class SimpleBoardController {
 	@Autowired
@@ -84,6 +86,7 @@ public class SimpleBoardController {
 	@ResponseBody
 	public String addREST(HttpServletRequest request, HttpSession session) {
 		String name = (String)session.getAttribute("loginname");
+		System.out.println("NAME :  = " + name);
 		String contents = request.getParameter("contents");
 		String password = (String)session.getAttribute("loginok");
 		SimpleBoardData simpleBoard = SimpleBoardData.builder()

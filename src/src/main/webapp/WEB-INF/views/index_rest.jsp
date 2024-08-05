@@ -5,17 +5,18 @@
 	</head>
 	<body onload="loginCheck()">
 		<script>	
+			let TimerCheck;
 			var loginok = '<%=(String)session.getAttribute("loginok")%>';
 			var member_grade = '<%=(String)session.getAttribute("memberGrade")%>';
-			function loginCheck() {
+			function loginCheck() {				
 				if(loginok != "" && loginok != "null") {
 					document.getElementById("loginbox").style.display = "none";
-					document.getElementById("contentsdiv").style.display = "block";					  
+					document.getElementById("contentsdiv").style.display = "block";								  
 					getList();
 				} else {
 					document.getElementById("loginbox").style.display = "block";
 					document.getElementById("contentsdiv").style.display = "none";
-					document.getElementById("userid").focus();	
+					document.getElementById("userid").focus();
 				}
 			}
 			function goLogin() {
@@ -23,16 +24,13 @@
 				var password = document.getElementById("userpassword").value;
 				document.getElementById("userid").value = "";
 				document.getElementById("userpassword").value = "";
-				var testList = new Object() ;
-				testList.userid = userid;
-				testList.userpassword = password;
-				var jsonData = JSON.stringify(testList) ;
-				fetch("http://127.0.0.1:3000/loginREST", {
+				const payload = new FormData();
+				payload.append("userid", userid);
+				payload.append("password", password);
+				
+				fetch("http://192.168.22.10:8080/loginREST", {
 					  method: "POST",
-					  headers: {
-						"Content-Type": "application/json"
-					  },
-					  body: jsonData,
+					  body: payload
 				})
 				.then((response) => response.json())
 				.then((data) => {
@@ -44,12 +42,14 @@
 						member_grade = data.grade;
 						document.getElementById("loginbox").style.display = "none";
 						document.getElementById("contentsdiv").style.display = "block";
+						TimerCheck = setInterval(getList, 1000);
 						getList();
 					}						  
 				});  
 			}	
 			function getList() {
-				fetch("http://127.0.0.1:8080/listREST")
+				console.log("GetLIST Start");
+				fetch("http://192.168.22.10:8080/listREST")
 					.then((response) => response.json())
 					.then((data) => {
 					  document.getElementById("contentsTable").innerHTML = 
@@ -77,18 +77,19 @@
 					});
 			}
 			function goLogout() {
-				fetch("http://127.0.0.1:8080/logoutREST")
+				fetch("http://192.168.22.10:8080/logoutREST")
 				.then((response) => {
 					loginok = "";
 					member_grade = "";
 					document.getElementById("loginbox").style.display = "block";
 					document.getElementById("contentsdiv").style.display = "none";	
-					document.getElementById("userid").focus();	  
+					document.getElementById("userid").focus();	 
+					clearInterval(TimerCheck);	 
 				}); 		
 			}
 			function goDel(id) {
 				if(confirm("정말 삭제하시겠습니까?")){
-					fetch("http://127.0.0.1:8080/delREST?id=" + id)
+					fetch("http://192.168.22.10:8080/delREST?id=" + id)
 					.then((response) => response.json())
 					.then((data) => {
 						if(data.result == "fail") {
@@ -101,7 +102,7 @@
 			}
 			function goMod(id, modPass, modName) {
 				var modifyText = prompt("수정 내용");
-				fetch("http://127.0.0.1:8080/modREST?id=" + id + "&contents=" + modifyText
+				fetch("http://192.168.22.10:8080/modREST?id=" + id + "&contents=" + modifyText
 						+ "&password=" + modPass + "&name=" + modName)
 				.then((response) => {
 					getList();		  
@@ -111,7 +112,8 @@
 				var contents = document.getElementById("contents").value;
 				const payload = new FormData();
 				payload.append("contents", contents);
-				fetch("http://127.0.0.1:8080/addREST", {
+				console.log(payload);
+				fetch("http://192.168.22.10:8080/addREST", {
 					  method: "POST",
 					  body: payload,
 				})
